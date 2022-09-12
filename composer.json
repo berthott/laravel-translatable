@@ -1,0 +1,36 @@
+{
+  "name": "berthott/laravel-translatable",
+  "description": "Laravel Helper for Model Translations",
+  "license": "MIT",
+  "authors": [
+      {
+          "name": "Jan Bladt",
+          "email": "berthott@web.de"
+      }
+  ],
+  "autoload" : {
+      "psr-4" : {
+          "berthott\\Translatable\\": "src"
+      }
+  },
+  "autoload-dev": {
+      "psr-4": {
+          "berthott\\Translatable\\Tests\\": "tests"
+      }
+  },
+  "extra" : {
+      "laravel" : {
+          "providers" : [
+              "berthott\\Translatable\\TranslatableServiceProvider"
+          ]
+      }
+  },
+  "require-dev": {
+    "orchestra/testbench": "^7.0",
+    "phpunit/phpunit": "^9.5",
+    "doctrine/dbal": "^3.3"
+  },
+  "require": {
+    "haydenpierce/class-finder": "^0.4.3"
+  }
+}
