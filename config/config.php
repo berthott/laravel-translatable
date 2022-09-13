@@ -51,5 +51,16 @@ return [
     |
     */
 
-    'languages' => [],
+    'optional_languages' => [],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default Language Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Defines the language that should be used as default.
+    |
+    */
+
+    'default_language' => 'en',
 ];

@@ -31,6 +31,7 @@
     "doctrine/dbal": "^3.3"
   },
   "require": {
+    "berthott/laravel-crudable": "^2.0",
     "haydenpierce/class-finder": "^0.4.3"
   }
 }
