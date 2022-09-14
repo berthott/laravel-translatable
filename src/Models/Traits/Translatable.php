@@ -5,12 +5,29 @@ namespace berthott\Translatable\Models\Traits;
 use berthott\Translatable\Facades\Translatable as FacadesTranslatable;
 use berthott\Translatable\Models\TranslatableContent;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 trait Translatable
 {
     public static function translatableFields(): array
     {
         return [];
+    }
+
+    public static function translatableRules(mixed $id): array
+    {
+        $ret = [];
+        foreach(self::translatableFields() as $field) {
+            $ret[FacadesTranslatable::getColumnName($field)] = 'nullable|numeric';
+            $ret[$field] = 'array';
+            foreach(config('translatable.languages') as $language => $language_name) {
+                $ret[$field.'.'.$language] = join('|', [
+                    in_array($language, config('translatable.optional_languages')) || $id ? 'nullable' : 'required',
+                    'string',
+                ]);
+            }
+        };
+        return $ret;
     }
 
     public static function bootTranslatable()
@@ -29,14 +46,30 @@ trait Translatable
     public function initializeTranslatable()
     {
         $this->append(self::translatableFields());
+        $this->fillable(array_merge(array_diff(self::translatableFields()), $this->fillable));
     }
 
-    protected function mutateAttribute($key, $value)
+    public function __get($key)
     {
-        if (in_array($key, self::translatableFields())) {
-            return $this->getTranslatableField($key);
+        $ret = parent::__get($key);
+        if ($ret) {
+            return $ret;
         }
-        return parent::mutateAttribute($key, $value);
+        foreach(self::translatableFields() as $field) {
+            if ($key === $field) {
+                return $this->getTranslatableField($field);
+            }
+        }
+    }
+
+    public function __call($method, $parameters)
+    {
+        foreach(self::translatableFields() as $field) {
+            if ($method === 'get'.Str::studly($field).'Attribute') {
+                return $this->getTranslatableField($field);
+            }
+        }
+        return parent::__call($method, $parameters);
     }
 
     public static function updateTranslatableFields(Model $model)
