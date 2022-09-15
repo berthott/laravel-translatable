@@ -48,7 +48,7 @@ class TranslatableServiceProvider extends ServiceProvider
             function (string $key) {
                 $key = $key.'_translatable_content_id';
                 $command = $this->unsignedBigInteger($key);
-                $this->foreign($key)->references('id')->on('translatable_content')->onDelete('cascade');
+                $this->foreign($key)->references('id')->on('translatable_contents')->onDelete('cascade');
                 return $command;
             }
         );

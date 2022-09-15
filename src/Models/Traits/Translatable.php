@@ -41,12 +41,20 @@ trait Translatable
         static::updating(function (Model $model) {
             static::updateTranslatableFields($model);
         });
+        static::deleting(function (Model $model) {
+            static::deleteTranslatableFields($model);
+        });
     }
 
     public function initializeTranslatable()
     {
         $this->append(self::translatableFields());
-        $this->fillable(array_merge(array_diff(self::translatableFields()), $this->fillable));
+        $id_columns = [];
+        foreach(self::translatableFields() as $field) {
+            $id_columns[] = FacadesTranslatable::getColumnName($field);
+        }
+        $fillable = array_diff(array_merge(array_diff(self::translatableFields()), $this->fillable), $id_columns);
+        $this->fillable($fillable);
     }
 
     public function __get($key)
@@ -79,6 +87,14 @@ trait Translatable
         }
     }
 
+    // cascade delete not working in tests
+    public static function deleteTranslatableFields(Model $model)
+    {
+        foreach(self::translatableFields() as $field) {
+            $model->deleteTranslatableField($field);
+        }
+    }
+
     public function getTranslatableField(string $field): array
     {
         $ret = [];
@@ -97,27 +113,30 @@ trait Translatable
         if ($translations = $this->$field) {
             $column = FacadesTranslatable::getColumnName($field);
             $default_translation = $this->array_slice_assoc($translations, config('translatable.default_language'));
-            $content = TranslatableContent::find($this->$column) ?: TranslatableContent::updateOrCreate([
-                'language' => config('translatable.default_language'),
-                'text' => $default_translation[config('translatable.default_language')],
+            $content = TranslatableContent::updateOrCreate(
+                ['id' => $this->$column],
+                [
+                    'language' => config('translatable.default_language'),
+                    'text' => $default_translation[config('translatable.default_language')
+                ],
             ]);
             $this->$column = $content->id;
             $this->offsetUnset($field);
-            foreach ($this->assoc_array_to_translation_array($translations) as $translation) {
-                $content->translatable_translations()->updateOrCreate($translation);
+            foreach ($translations as $language => $translation) {
+                $content->translatable_translations()->updateOrCreate(
+                    ['language' => $language],
+                    ['text' => $translation],
+                );
             }
         }
     }
 
-    private function assoc_array_to_translation_array($translations): array {
-        $ret = [];
-        foreach ($translations as $language => $translation) {
-            array_push($ret, [
-                'language' => $language,
-                'text' => $translation,
-            ]);
-        }
-        return $ret;
+    public function deleteTranslatableField(string $field)
+    {
+        $column = FacadesTranslatable::getColumnName($field);
+        $content = TranslatableContent::find($this->$column);
+        $content->translatable_translations()->delete();
+        $content->delete();
     }
 
     private function array_slice_assoc(&$array, $keys) {

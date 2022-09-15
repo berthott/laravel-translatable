@@ -53,6 +53,20 @@ class CrudableTranslatableTest extends TestCase
             ->assertJsonFragment(array_merge($expected, ['user_input_translatable_content_id' => 1]));
     }
 
+    public function test_show(): void
+    {
+        $dummy = Dummy::factory()->create();
+        $this->get(route('dummies.show', ['dummy' => $dummy->id]))
+            ->assertStatus(200)
+            ->assertJsonFragment($dummy->toArray());
+    }
+
+    public function test_validation(): void
+    {
+        $this->post(route('dummies.store'))
+            ->assertJsonValidationErrors(['user_input.en', 'user_input.de']);
+    }
+
     public function test_store(): void
     {
         $dummy = Dummy::factory()->make();
@@ -71,6 +85,121 @@ class CrudableTranslatableTest extends TestCase
             'translatable_content_id' => 1,
             'language' => 'de',
             'text' => $expected['user_input']['de'],
+        ]);
+    }
+
+    public function test_update(): void
+    {
+        $dummy = Dummy::factory()->create();
+        $this->assertDatabaseHas('dummies', ['user_input_translatable_content_id' => 1]);
+        $this->assertDatabaseHas('translatable_contents', [
+            'id' => 1,
+            'language' => 'en',
+            'text' => $dummy->user_input['en'],
+        ]);
+        $this->assertDatabaseHas('translatable_translations', [
+            'id' => 1,
+            'translatable_content_id' => 1,
+            'language' => 'de',
+            'text' => $dummy->user_input['de'],
+        ]);
+        $new_user_input = [
+            'user_input' => [
+                'en' => 'English Content',
+                'de' => 'German Content',
+            ]
+        ];
+        $this->put(route('dummies.update', ['dummy' => $dummy->id]), $new_user_input)
+            ->assertSuccessful()
+            ->assertJsonFragment($new_user_input);
+        $this->assertDatabaseHas('translatable_contents', [
+            'id' => 1,
+            'language' => 'en',
+            'text' => $new_user_input['user_input']['en'],
+        ]);
+        $this->assertDatabaseHas('translatable_translations', [
+            'id' => 1,
+            'translatable_content_id' => 1,
+            'language' => 'de',
+            'text' => $new_user_input['user_input']['de'],
+        ]);
+    }
+
+    public function test_update_optional(): void
+    {
+        $dummy = Dummy::factory()->create();
+        $this->assertDatabaseHas('dummies', ['user_input_translatable_content_id' => 1]);
+        $this->assertDatabaseHas('translatable_contents', [
+            'id' => 1,
+            'language' => 'en',
+            'text' => $dummy->user_input['en'],
+        ]);
+        $this->assertDatabaseHas('translatable_translations', [
+            'id' => 1,
+            'translatable_content_id' => 1,
+            'language' => 'de',
+            'text' => $dummy->user_input['de'],
+        ]);
+        $this->assertDatabaseMissing('translatable_translations', [
+            'id' => 1,
+            'translatable_content_id' => 1,
+            'language' => 'fr',
+        ]);
+        $new_user_input = [
+            'user_input' => [
+                'en' => 'English Content',
+                'de' => 'German Content',
+                'fr' => 'Frensh Content',
+            ]
+        ];
+        $this->put(route('dummies.update', ['dummy' => $dummy->id]), $new_user_input)
+            ->assertSuccessful()
+            ->assertJsonFragment($new_user_input);
+        $this->assertDatabaseHas('translatable_contents', [
+            'id' => 1,
+            'language' => 'en',
+            'text' => $new_user_input['user_input']['en'],
+        ]);
+        $this->assertDatabaseHas('translatable_translations', [
+            'id' => 1,
+            'translatable_content_id' => 1,
+            'language' => 'de',
+            'text' => $new_user_input['user_input']['de'],
+        ]);
+        $this->assertDatabaseHas('translatable_translations', [
+            'id' => 2,
+            'translatable_content_id' => 1,
+            'language' => 'fr',
+            'text' => $new_user_input['user_input']['fr'],
+        ]);
+    }
+
+    public function test_delete(): void
+    {
+        $dummy = Dummy::factory()->create();
+        $this->assertDatabaseHas('dummies', ['user_input_translatable_content_id' => 1]);
+        $this->assertDatabaseHas('translatable_contents', [
+            'id' => 1,
+            'language' => 'en',
+            'text' => $dummy->user_input['en'],
+        ]);
+        $this->assertDatabaseHas('translatable_translations', [
+            'id' => 1,
+            'translatable_content_id' => 1,
+            'language' => 'de',
+            'text' => $dummy->user_input['de'],
+        ]);
+        $this->delete(route('dummies.update', ['dummy' => $dummy->id]))
+            ->assertSuccessful();
+        $this->assertDatabaseMissing('dummies', ['user_input_translatable_content_id' => 1]);
+        $this->assertDatabaseMissing('translatable_contents', [
+            'id' => 1,
+            'language' => 'en',
+        ]);
+        $this->assertDatabaseMissing('translatable_translations', [
+            'id' => 1,
+            'translatable_content_id' => 1,
+            'language' => 'de',
         ]);
     }
 }

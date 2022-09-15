@@ -6,15 +6,20 @@ use berthott\Crudable\CrudableServiceProvider;
 use berthott\Scopeable\ScopeableServiceProvider;
 use berthott\Translatable\TranslatableServiceProvider;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
+    use DatabaseMigrations;
+
     public function setUp(): void
     {
         parent::setUp();
+        $this->setUpTable();
     }
 
     protected function getPackageProviders($app)
@@ -28,10 +33,9 @@ abstract class TestCase extends BaseTestCase
 
     protected function getEnvironmentSetUp($app)
     {
-        $this->setUpTable();
-        $this->setUpMigrationTables();
         Config::set('translatable.namespace', __NAMESPACE__);
-        Config::set('translatable.languages', ['en' => 'English', 'de' => 'Deutsch']);
+        Config::set('translatable.languages', ['en' => 'English', 'de' => 'German', 'fr' => 'Frensh']);
+        Config::set('translatable.optional_languages', ['fr']);
         Config::set('crudable.namespace', [__NAMESPACE__, 'berthott\Translatable\Models']);
     }
 
@@ -42,15 +46,8 @@ abstract class TestCase extends BaseTestCase
             $table->translatable('user_input');
             $table->timestamps();
         });
-    }
 
-    private function setUpMigrationTables(): void
-    {
-        foreach (glob(__DIR__.'/../../../database/migrations/*.php') as $filename) {
-            include_once $filename;
-        }
-        (new \CreateTranslatableLanguagesTable)->up();
-        (new \CreateTranslatableContentsTable)->up();
-        (new \CreateTranslatableTranslationsTable)->up();
+        // for delete cascadation, is disabled in sqlite by default
+        DB::statement(DB::raw('PRAGMA foreign_keys=1'));
     }
 }
