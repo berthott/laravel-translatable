@@ -19,6 +19,10 @@ class CreateTranslatableContentsTable extends Migration
             $table->string('text');
             $table->timestamps();
         });
+        
+        Schema::table('translatable_contents', function (Blueprint $table) {
+            $table->foreign('language', 'translatable_contents_language_fk')->references('id')->on('translatable_languages')->onDelete('cascade');
+        });
     }
 
     /**

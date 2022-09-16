@@ -15,15 +15,16 @@ class CreateTranslatableTranslationsTable extends Migration
     {
         Schema::create('translatable_translations', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedBigInteger('translatable_content_id');
+            $table->unsignedInteger('translatable_content_id');
             $table->string('language');
             $table->string('text');
             $table->timestamps();
         });
         
         Schema::table('translatable_translations', function (Blueprint $table) {
-            $table->unique(['translatable_content_id', 'language']);
-            $table->foreign('translatable_content_id')->references('id')->on('translatable_contents')->onDelete('cascade');
+            $table->unique(['translatable_content_id', 'language'], 'translatable_translations_language_unique');
+            $table->foreign('language', 'translatable_translations_language_fk')->references('id')->on('translatable_languages')->onDelete('cascade');
+            $table->foreign('translatable_content_id', 'translatable_translations_content_fk')->references('id')->on('translatable_contents')->onDelete('cascade');
         });
     }
 
