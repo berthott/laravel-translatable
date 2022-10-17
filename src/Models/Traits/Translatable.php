@@ -14,6 +14,11 @@ trait Translatable
         return [];
     }
 
+    public static function translatableOptionalFields(): array
+    {
+        return [];
+    }
+
     public static function translatableRules(mixed $id): array
     {
         $ret = [];
@@ -22,12 +27,20 @@ trait Translatable
             $ret[$field] = 'array';
             foreach(config('translatable.languages') as $language => $language_name) {
                 $ret[$field.'.'.$language] = join('|', [
-                    in_array($language, config('translatable.optional_languages')) || $id ? 'nullable' : 'required',
+                    in_array($language, self::optionalFields($field)) || $id ? 'nullable' : 'required',
                     'string',
                 ]);
             }
         };
         return $ret;
+    }
+
+    private static function optionalFields(string $field): array
+    {
+        $additional = array_key_exists($field, self::translatableOptionalFields()) 
+            ? self::translatableOptionalFields()[$field]
+            : [];
+        return array_merge(config('translatable.optional_languages'), $additional);
     }
 
     public static function bootTranslatable()
