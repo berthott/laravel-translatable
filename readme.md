@@ -13,18 +13,18 @@ $ composer require berthott/laravel-translatable
 * Create your table and corresponding model, eg. with `php artisan make:model YourModel -m`
 * Use the `translatable` Macro to add translatable fields in your migration.
 * Add the `Translatable` Trait to your newly generated model.
-* Add and fill the `translatable` array with a list of your translatable fields to your model.
-* In your validation rule use the `translatable` rule to assure the correct data format, eg. 
+* Add a `translatableFields` method to return an array with a list of your translatable fields to your model.
+* Use `self::translatableRules` to gather all the rules you need to assure the correct data format, eg. 
     ```json
     {
         "en": "English String",
         "de": "German String",
     }
     ```
-* If some fields should have optional languages, not listed in the packages config, you can add an `translatable_optional` array with the fields as keys and the optional languages as an value as an array. 
+* If some fields should have optional languages, not listed in the packages config, you can add an `translatableOptionalFields` method to return an array with the fields as keys and the optional languages as an value as an array. 
 * That's it. The package will take care of everything else.
     * There will be three tables migrated: `translatable_content`, `translatable_translations` and `translatable_languages`. The languages table will be filled according to the packages config.
-    * A Laravel Model Observer will be registered for your model, that will hook the data storing of your translatable fields.
+    * A Laravel Model Observer will be registered for your model, that will hook into the data storing of your translatable fields.
     * An attribute holding the translated data will be added to your model automatically.
 
 ## Options
