@@ -14,8 +14,8 @@ class CreateTranslatableTranslationsTable extends Migration
     public function up()
     {
         Schema::create('translatable_translations', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('translatable_content_id');
+            $table->id();
+            $table->unsignedBigInteger('translatable_content_id');
             $table->string('language');
             $table->string('text');
             $table->timestamps();
