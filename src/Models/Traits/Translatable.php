@@ -153,7 +153,7 @@ trait Translatable
     }
 
     private function array_slice_assoc(&$array, $keys) {
-        return array_splice($array, array_search($keys, $array), 1);
+        return array_splice($array, array_search($keys, array_keys($array)), 1);
     }
 
 }

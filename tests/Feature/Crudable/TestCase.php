@@ -36,6 +36,7 @@ abstract class TestCase extends BaseTestCase
         Config::set('translatable.namespace', __NAMESPACE__);
         Config::set('translatable.languages', ['en' => 'English', 'de' => 'German', 'fr' => 'Frensh']);
         Config::set('translatable.optional_languages', ['fr']);
+        Config::set('translatable.default_language', 'de');
         Config::set('crudable.namespace', [__NAMESPACE__, 'berthott\Translatable\Models']);
     }
 

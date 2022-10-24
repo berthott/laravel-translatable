@@ -39,14 +39,14 @@ class CrudableTranslatableTest extends TestCase
         $this->assertDatabaseHas('dummies', ['user_input_translatable_content_id' => 1]);
         $this->assertDatabaseHas('translatable_contents', [
             'id' => 1,
-            'language' => 'en',
-            'text' => $expected['user_input']['en'],
+            'language' => 'de',
+            'text' => $expected['user_input']['de'],
         ]);
         $this->assertDatabaseHas('translatable_translations', [
             'id' => 1,
             'translatable_content_id' => 1,
-            'language' => 'de',
-            'text' => $expected['user_input']['de'],
+            'language' => 'en',
+            'text' => $expected['user_input']['en'],
         ]);
         $this->get(route('dummies.index'))
             ->assertStatus(200)
@@ -77,14 +77,14 @@ class CrudableTranslatableTest extends TestCase
         $this->assertDatabaseHas('dummies', ['user_input_translatable_content_id' => 1]);
         $this->assertDatabaseHas('translatable_contents', [
             'id' => 1,
-            'language' => 'en',
-            'text' => $expected['user_input']['en'],
+            'language' => 'de',
+            'text' => $expected['user_input']['de'],
         ]);
         $this->assertDatabaseHas('translatable_translations', [
             'id' => 1,
             'translatable_content_id' => 1,
-            'language' => 'de',
-            'text' => $expected['user_input']['de'],
+            'language' => 'en',
+            'text' => $expected['user_input']['en'],
         ]);
     }
 
@@ -94,14 +94,14 @@ class CrudableTranslatableTest extends TestCase
         $this->assertDatabaseHas('dummies', ['user_input_translatable_content_id' => 1]);
         $this->assertDatabaseHas('translatable_contents', [
             'id' => 1,
-            'language' => 'en',
-            'text' => $dummy->user_input['en'],
+            'language' => 'de',
+            'text' => $dummy->user_input['de'],
         ]);
         $this->assertDatabaseHas('translatable_translations', [
             'id' => 1,
             'translatable_content_id' => 1,
-            'language' => 'de',
-            'text' => $dummy->user_input['de'],
+            'language' => 'en',
+            'text' => $dummy->user_input['en'],
         ]);
         $new_user_input = [
             'user_input' => [
@@ -114,14 +114,14 @@ class CrudableTranslatableTest extends TestCase
             ->assertJsonFragment($new_user_input);
         $this->assertDatabaseHas('translatable_contents', [
             'id' => 1,
-            'language' => 'en',
-            'text' => $new_user_input['user_input']['en'],
+            'language' => 'de',
+            'text' => $new_user_input['user_input']['de'],
         ]);
         $this->assertDatabaseHas('translatable_translations', [
             'id' => 1,
             'translatable_content_id' => 1,
-            'language' => 'de',
-            'text' => $new_user_input['user_input']['de'],
+            'language' => 'en',
+            'text' => $new_user_input['user_input']['en'],
         ]);
     }
 
@@ -131,14 +131,14 @@ class CrudableTranslatableTest extends TestCase
         $this->assertDatabaseHas('dummies', ['user_input_translatable_content_id' => 1]);
         $this->assertDatabaseHas('translatable_contents', [
             'id' => 1,
-            'language' => 'en',
-            'text' => $dummy->user_input['en'],
+            'language' => 'de',
+            'text' => $dummy->user_input['de'],
         ]);
         $this->assertDatabaseHas('translatable_translations', [
             'id' => 1,
             'translatable_content_id' => 1,
-            'language' => 'de',
-            'text' => $dummy->user_input['de'],
+            'language' => 'en',
+            'text' => $dummy->user_input['en'],
         ]);
         $this->assertDatabaseMissing('translatable_translations', [
             'id' => 1,
@@ -157,14 +157,14 @@ class CrudableTranslatableTest extends TestCase
             ->assertJsonFragment($new_user_input);
         $this->assertDatabaseHas('translatable_contents', [
             'id' => 1,
-            'language' => 'en',
-            'text' => $new_user_input['user_input']['en'],
+            'language' => 'de',
+            'text' => $new_user_input['user_input']['de'],
         ]);
         $this->assertDatabaseHas('translatable_translations', [
             'id' => 1,
             'translatable_content_id' => 1,
-            'language' => 'de',
-            'text' => $new_user_input['user_input']['de'],
+            'language' => 'en',
+            'text' => $new_user_input['user_input']['en'],
         ]);
         $this->assertDatabaseHas('translatable_translations', [
             'id' => 2,
@@ -180,26 +180,26 @@ class CrudableTranslatableTest extends TestCase
         $this->assertDatabaseHas('dummies', ['user_input_translatable_content_id' => 1]);
         $this->assertDatabaseHas('translatable_contents', [
             'id' => 1,
-            'language' => 'en',
-            'text' => $dummy->user_input['en'],
+            'language' => 'de',
+            'text' => $dummy->user_input['de'],
         ]);
         $this->assertDatabaseHas('translatable_translations', [
             'id' => 1,
             'translatable_content_id' => 1,
-            'language' => 'de',
-            'text' => $dummy->user_input['de'],
+            'language' => 'en',
+            'text' => $dummy->user_input['en'],
         ]);
         $this->delete(route('dummies.update', ['dummy' => $dummy->id]))
             ->assertSuccessful();
         $this->assertDatabaseMissing('dummies', ['user_input_translatable_content_id' => 1]);
         $this->assertDatabaseMissing('translatable_contents', [
             'id' => 1,
-            'language' => 'en',
+            'language' => 'de',
         ]);
         $this->assertDatabaseMissing('translatable_translations', [
             'id' => 1,
             'translatable_content_id' => 1,
-            'language' => 'de',
+            'language' => 'en',
         ]);
     }
 }

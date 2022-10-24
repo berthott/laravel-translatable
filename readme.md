@@ -31,7 +31,7 @@ $ composer require berthott/laravel-translatable
 
 To change the default options use
 ```
-$ php artisan vendor:publish --provider="berthott\Translatabel\TranslatableServiceProvider" --tag="config"
+$ php artisan vendor:publish --provider="berthott\Translatable\TranslatableServiceProvider" --tag="config"
 ```
 * `namespace`: string or array with one ore multiple namespaces that should be monitored for the Translatable-Trait. Defaults to `App\Models`.
 * `namespace_mode`: Defines the search mode for the namespaces. `ClassFinder::STANDARD_MODE` will only find the exact matching namespace, `ClassFinder::RECURSIVE_MODE` will find all subnamespaces. Defaults to `ClassFinder::STANDARD_MODE`.
