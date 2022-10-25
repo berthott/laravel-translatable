@@ -17,7 +17,7 @@ class CreateTranslatableTranslationsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('translatable_content_id');
             $table->string('language');
-            $table->string('text');
+            $table->text('text');
             $table->timestamps();
         });
         

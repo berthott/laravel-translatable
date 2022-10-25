@@ -16,7 +16,7 @@ class CreateTranslatableContentsTable extends Migration
         Schema::create('translatable_contents', function (Blueprint $table) {
             $table->id();
             $table->string('language');
-            $table->string('text');
+            $table->text('text');
             $table->timestamps();
         });
         
