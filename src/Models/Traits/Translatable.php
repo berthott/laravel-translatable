@@ -135,7 +135,13 @@ trait Translatable
             ]);
             $this->$column = $content->id;
             $this->offsetUnset($field);
+            // delete when empty
+            $content->translatable_translations()->whereNotIn('language', array_keys($translations))->delete();
             foreach ($translations as $language => $translation) {
+                if (!$translation) { // delete when null
+                    $content->translatable_translations()->where('language', $language)->delete();
+                    continue;
+                }
                 $content->translatable_translations()->updateOrCreate(
                     ['language' => $language],
                     ['text' => $translation],
