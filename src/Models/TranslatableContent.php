@@ -4,6 +4,9 @@ namespace berthott\Translatable\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Model for translatable content
+ */
 class TranslatableContent extends Model
 {
     /**

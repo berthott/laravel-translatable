@@ -5,6 +5,9 @@ namespace berthott\Translatable\Models;
 use berthott\Crudable\Models\Traits\Crudable;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Model for translatable languages
+ */
 class TranslatableLanguage extends Model
 {
     use Crudable;

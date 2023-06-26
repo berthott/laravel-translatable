@@ -9,7 +9,8 @@ return [
     | Model Namespace Configuration
     |--------------------------------------------------------------------------
     |
-    | Defines one or multiple model namespaces.
+    | String or array with one ore multiple namespaces that should be monitored 
+    | for the configured trait.
     |
     */
 
@@ -22,8 +23,9 @@ return [
     |
     | Defines the search mode for the namespaces. ClassFinder::STANDARD_MODE
     | will only find the exact matching namespace, ClassFinder::RECURSIVE_MODE
-    | will find all subnamespaces. Beware: ClassFinder::RECURSIVE_MODE might 
-    | cause some testing issues.
+    | will find all subnamespaces.
+    | 
+    | Beware: ClassFinder::RECURSIVE_MODE might cause some testing issues.
     |
     */
 
