@@ -23,4 +23,14 @@ class BasicTranslatableTest extends TestCase
         ]);
         $this->assertSame($expected, $dummy->user_input);
     }
+
+    public function test_delete_model_with_empty_translation(): void
+    {
+        $dummy = Dummy::factory()->create();
+        $this->assertDatabaseHas('dummies', ['nullable_input_translatable_content_id' => null]);
+        $this->assertDatabaseCount('dummies', 1);
+        $dummy->delete();
+        $this->assertDatabaseMissing('dummies', ['nullable_input_translatable_content_id' => null]);
+        $this->assertDatabaseCount('dummies', 0);
+    }
 }

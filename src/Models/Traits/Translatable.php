@@ -224,9 +224,10 @@ trait Translatable
     private function deleteTranslatableField(string $field)
     {
         $column = FacadesTranslatable::getColumnName($field);
-        $content = TranslatableContent::find($this->$column);
-        $content->translatable_translations()->delete();
-        $content->delete();
+        if ($content = TranslatableContent::find($this->$column)) {
+            $content->translatable_translations()->delete();
+            $content->delete();
+        }
     }
 
     /**

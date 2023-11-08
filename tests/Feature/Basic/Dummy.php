@@ -15,7 +15,10 @@ class Dummy extends Model
 
     public static function translatableFields(): array
     {
-        return ['user_input'];
+        return [
+            'user_input',
+            'nullable_input',
+        ];
     }
 
     protected static function newFactory()
