@@ -18,6 +18,11 @@ class TranslatableContent extends Model
         'language',
         'text',
     ];
+
+    protected $with = [
+        'translatable_translations',
+        'translatable_language',
+    ];
     
     /**
      * Get the routes associated with this permission.

@@ -10,6 +10,11 @@ use Illuminate\Support\Str;
 trait Translatable
 {
     /**
+     * @var array $translation_relations
+     */
+    private static $translation_relations = [];
+
+    /**
      * Bootstrap the trait.
      * 
      * Intercept crud methods with translation logic.
@@ -28,6 +33,23 @@ trait Translatable
         static::deleting(function (Model $model) {
             static::deleteTranslatableFields($model);
         });
+
+        static::buildRelations();
+    }
+
+    /**
+     * Build the relations for the trait.
+     */
+    private static function buildRelations()
+    {
+        foreach(self::translatableFields() as $field) {
+            $column = FacadesTranslatable::getColumnName($field);
+            $relation = $field.'_translation';
+            static::$translation_relations[] = $relation;
+            static::resolveRelationUsing($relation, function ($model) use ($column) {
+                return $model->hasOne(TranslatableContent::class, 'id', $column);
+            });
+        }
     }
 
     /**
@@ -37,6 +59,9 @@ trait Translatable
     {
         // set appended fields
         $this->append(self::translatableFields());
+
+        // eager load relationships
+        array_push($this->with, ...static::$translation_relations);
 
         // set fillable fields
         $id_columns = [];
@@ -170,8 +195,8 @@ trait Translatable
     private function getTranslatableField(string $field): array
     {
         $ret = [];
-        $column = FacadesTranslatable::getColumnName($field);
-        if ($content = TranslatableContent::find($this->$column)) {
+        $field_relation = $field.'_translation';
+        if ($content = $this->$field_relation) {
             $ret[config('translatable.default_language')] = $content->text;
             foreach($content->translatable_translations as $translation) {  
                 $ret[$translation->language] = $translation->text;
@@ -191,9 +216,10 @@ trait Translatable
         // call of magic __get()
         if ($translations = $this->$field) {
             $column = FacadesTranslatable::getColumnName($field);
+            $translation_relation = $field.'_translation';
             $default_translation = $this->array_slice_assoc($translations, config('translatable.default_language'));
             // set default translation
-            $content = TranslatableContent::updateOrCreate(
+            $content = $this->$translation_relation()->updateOrCreate(
                 ['id' => $this->$column],
                 [
                     'language' => config('translatable.default_language'),
@@ -215,6 +241,7 @@ trait Translatable
                     ['text' => $translation],
                 );
             }
+            $this->refresh();
         }
     }
 
@@ -223,8 +250,8 @@ trait Translatable
      */
     private function deleteTranslatableField(string $field)
     {
-        $column = FacadesTranslatable::getColumnName($field);
-        if ($content = TranslatableContent::find($this->$column)) {
+        $field_relation = $field.'_translation';
+        if ($content = $this->$field_relation) {
             $content->translatable_translations()->delete();
             $content->delete();
         }
