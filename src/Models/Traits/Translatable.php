@@ -34,6 +34,10 @@ trait Translatable
             static::deleteTranslatableFields($model);
         });
 
+        static::saved(function (Model $model) {
+            $model->refresh();
+        });
+
         static::buildRelations();
     }
 
@@ -241,7 +245,6 @@ trait Translatable
                     ['text' => $translation],
                 );
             }
-            $this->refresh();
         }
     }
 
