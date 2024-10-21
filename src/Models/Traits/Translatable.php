@@ -64,8 +64,9 @@ trait Translatable
         // set appended fields
         $this->append(self::translatableFields());
 
-        // eager load relationships
+        // eager load & hide relationships
         array_push($this->with, ...static::$translation_relations);
+        array_push($this->hidden, ...static::$translation_relations);
 
         // set fillable fields
         $id_columns = [];
