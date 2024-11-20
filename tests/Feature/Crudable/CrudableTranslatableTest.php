@@ -88,6 +88,21 @@ class CrudableTranslatableTest extends TestCase
         ]);
     }
 
+    public function test_store_null(): void
+    {
+        $dummy = Dummy::factory()->make();
+        $this->post(route('dummies.store'), [
+            'user_input' => $dummy->user_input,
+            'nullable_input' => null,
+        ])
+            ->assertSuccessful()
+            ->assertJsonFragment(array_merge([
+                'user_input' => $dummy->user_input,
+                'nullable_input' => [],
+            ], ['nullable_input_translatable_content_id' => null]));
+        $this->assertDatabaseMissing('dummies', ['nullable_input_translatable_content_id' => 1]);
+    }
+
     public function test_update(): void
     {
         $dummy = Dummy::factory()->create();
@@ -112,6 +127,17 @@ class CrudableTranslatableTest extends TestCase
         $this->put(route('dummies.update', ['dummy' => $dummy->id]), $new_user_input)
             ->assertSuccessful()
             ->assertJsonFragment($new_user_input);
+        $this->assertDatabaseMissing('translatable_contents', [
+            'id' => 1,
+            'language' => 'de',
+            'text' => $dummy->user_input['de'],
+        ]);
+        $this->assertDatabaseMissing('translatable_translations', [
+            'id' => 1,
+            'translatable_content_id' => 1,
+            'language' => 'en',
+            'text' => $dummy->user_input['en'],
+        ]);
         $this->assertDatabaseHas('translatable_contents', [
             'id' => 1,
             'language' => 'de',

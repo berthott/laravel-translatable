@@ -45,6 +45,7 @@ abstract class TestCase extends BaseTestCase
         Schema::create('dummies', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->translatable('user_input');
+            $table->translatable('nullable_input')->nullable();
             $table->timestamps();
         });
 

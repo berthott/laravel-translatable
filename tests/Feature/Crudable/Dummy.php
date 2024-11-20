@@ -15,12 +15,17 @@ class Dummy extends Model
 
     public static function translatableFields(): array
     {
-        return ['user_input'];
+        return ['user_input', 'nullable_input'];
     }
 
     public static function rules(mixed $id): array
     {
-        return self::translatableRules($id);
+        $rules = self::translatableRules($id);
+        $rules['nullable_input'] = 'nullable|array';
+        $rules['nullable_input.en'] = 'nullable|string';
+        $rules['nullable_input.de'] = 'nullable|string';
+        $rules['nullable_input.fr'] = 'nullable|string';
+        return $rules;
     }
 
     protected static function newFactory()

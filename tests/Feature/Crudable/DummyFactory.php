@@ -15,6 +15,7 @@ class DummyFactory extends Factory
                 'en' => $this->faker->text(),
                 'de' => $this->faker->text(),
             ],
+            'nullable_input' => null,
         ];
     }
 }
