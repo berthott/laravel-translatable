@@ -232,7 +232,6 @@ trait Translatable
                 ],
             ]);
             $this->$column = $content->id;
-            $this->offsetUnset($field);
             // delete when empty
             $content->translatable_translations()->whereNotIn('language', array_keys($translations))->delete();
             // set the translations
@@ -247,6 +246,7 @@ trait Translatable
                 );
             }
         }
+        $this->offsetUnset($field);
     }
 
     /**
