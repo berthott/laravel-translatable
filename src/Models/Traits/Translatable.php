@@ -21,13 +21,7 @@ trait Translatable
      */
     public static function bootTranslatable()
     {
-        static::creating(function (Model $model) {
-            static::updateTranslatableFields($model);
-        });
         static::saving(function (Model $model) {
-            static::updateTranslatableFields($model);
-        });
-        static::updating(function (Model $model) {
             static::updateTranslatableFields($model);
         });
         static::deleting(function (Model $model) {
