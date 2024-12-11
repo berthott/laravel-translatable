@@ -1,3 +1,5 @@
+![test workflow](https://github.com/berthott/laravel-translatable/actions/workflows/test.yml/badge.svg)
+
 # Laravel-Translatable
 
 A helper for Model Translations in Laravel.
